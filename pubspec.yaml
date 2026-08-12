@@ -1,0 +1,32 @@
+name: youth_full_website
+description: Code4Youth — Mobile Coding Education Platform
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  font_awesome_flutter: ^10.7.0
+  lucide_icons_flutter: ^3.1.15
+  provider: ^6.1.2
+  http: ^1.2.1
+  url_launcher: ^6.3.0
+  intl: ^0.20.2
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.0
+  confetti: ^0.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  # Note: Ensure you place font files in assets/fonts/ if using local files, 
+  # otherwise GoogleFonts will fetch them dynamically.

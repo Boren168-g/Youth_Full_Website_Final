@@ -1,0 +1,5 @@
+Database "YouthWebsite" ready.
+Connected to YouthWebsite database.
+Server running on http://0.0.0.0:3000
+Users table ready.
+^C
