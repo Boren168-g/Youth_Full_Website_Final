@@ -71,12 +71,14 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.post('/api/contact', async (req, res) => {
-    const { name, email, message } = req.body;
+app.get('/api/check-registration', async (req, res) => {
+    const { userId, className } = req.query;
     try {
-      await pool.query('INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)', [name, email, message]);
-      res.status(201).json({ message: 'Saved' });
-    } catch (err) { res.status(500).json({ message: 'Error' }); }
+      const [results] = await pool.query('SELECT * FROM registrations WHERE user_id = ? AND class_name = ?', [userId, className]);
+      res.json({ isRegistered: results.length > 0 });
+    } catch (err) {
+      res.status(500).json({ message: 'Error checking status' });
+    }
 });
 
 app.post('/api/enroll', async (req, res) => {
@@ -84,6 +86,14 @@ app.post('/api/enroll', async (req, res) => {
     try {
       await pool.query('INSERT INTO registrations (user_id, class_name, phone, age, experience_level, amount, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, "paid")', [userId, className, phone, age, experience, amount, paymentMethod]);
       res.status(201).json({ message: 'Enrolled' });
+    } catch (err) { res.status(500).json({ message: 'Error' }); }
+});
+
+app.get('/api/check-event-booking', async (req, res) => {
+    const { userId, eventTitle } = req.query;
+    try {
+      const [results] = await pool.query('SELECT * FROM event_bookings WHERE user_id = ? AND event_title = ?', [userId, eventTitle]);
+      res.json({ isBooked: results.length > 0 });
     } catch (err) { res.status(500).json({ message: 'Error' }); }
 });
 
@@ -95,10 +105,21 @@ app.post('/api/book-event', async (req, res) => {
     } catch (err) { res.status(500).json({ message: 'Error' }); }
 });
 
+app.post('/api/contact', async (req, res) => {
+    const { name, email, message } = req.body;
+    try {
+      await pool.query('INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)', [name, email, message]);
+      res.status(201).json({ message: 'Saved' });
+    } catch (err) { res.status(500).json({ message: 'Error' }); }
+});
+
 // 3. Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
     // Create tables in background
     pool.query(`CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255) UNIQUE, password VARCHAR(255), role VARCHAR(50), createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
+    pool.query(`CREATE TABLE IF NOT EXISTS registrations (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, class_name VARCHAR(255), phone VARCHAR(20), age INT, experience_level VARCHAR(50), amount DECIMAL(10,2), payment_method VARCHAR(50), payment_status VARCHAR(50), registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
+    pool.query(`CREATE TABLE IF NOT EXISTS event_bookings (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, event_title VARCHAR(255), payment_status VARCHAR(50), booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
+    pool.query(`CREATE TABLE IF NOT EXISTS contacts (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), message TEXT, createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
 });
