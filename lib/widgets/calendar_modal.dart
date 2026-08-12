@@ -14,32 +14,32 @@ class CalendarModal extends StatelessWidget {
       {
         'month': 'September 2024',
         'events': [
-          {'day': '15', 'time': '08:30 AM', 'title': 'Phnom Penh Tech Summit', 'type': 'Conference', 'location': 'Factory Phnom Penh', 'color': const Color(0xFFFF6B35)},
+          {'day': '15', 'time': '08:30 AM', 'title': 'Phnom Penh Tech Summit', 'type': 'Conference', 'location': 'Factory Phnom Penh', 'color': const Color(0xFFFF6B35), 'status': 'Registration Open'},
         ]
       },
       {
         'month': 'October 2024',
         'events': [
-          {'day': '05', 'time': '01:00 PM', 'title': 'Siem Reap Bootcamp', 'type': 'Workshop', 'location': 'Heritage Hub', 'color': const Color(0xFF1E3FCE)},
-          {'day': '22', 'time': '07:00 PM', 'title': 'Khmer AI & Data Night', 'type': 'Virtual', 'location': 'Zoom / FB Live', 'color': const Color(0xFF00C9A7)},
+          {'day': '05', 'time': '01:00 PM', 'title': 'Siem Reap Bootcamp', 'type': 'Workshop', 'location': 'Heritage Hub', 'color': const Color(0xFF1E3FCE), 'status': 'Limited Spots'},
+          {'day': '22', 'time': '07:00 PM', 'title': 'Khmer AI & Data Night', 'type': 'Virtual', 'location': 'Zoom / FB Live', 'color': const Color(0xFF00C9A7), 'status': 'Free Entry'},
         ]
       },
       {
         'month': 'November 2024',
         'events': [
-          {'day': '12', 'time': '09:00 AM', 'title': 'Battambang Hackathon', 'type': 'Competition', 'location': 'Uni. Battambang', 'color': const Color(0xFFFFD23F)},
+          {'day': '12', 'time': '09:00 AM', 'title': 'Battambang Hackathon', 'type': 'Competition', 'location': 'Uni. Battambang', 'color': const Color(0xFFFFD23F), 'status': 'Applications Open'},
         ]
       },
       {
         'month': 'December 2024',
         'events': [
-          {'day': '15', 'time': '02:00 PM', 'title': 'Year End Showcase', 'type': 'Exhibition', 'location': 'Phnom Penh Hotel', 'color': const Color(0xFF6B35FF)},
+          {'day': '15', 'time': '02:00 PM', 'title': 'Year End Showcase', 'type': 'Exhibition', 'location': 'Phnom Penh Hotel', 'color': const Color(0xFF6B35FF), 'status': 'Coming Soon'},
         ]
       },
       {
         'month': 'January 2025',
         'events': [
-          {'day': '10', 'time': '09:00 AM', 'title': 'New Cohort Launch', 'type': 'Launch', 'location': 'C4Y Center', 'color': const Color(0xFFFF3F6B)},
+          {'day': '10', 'time': '09:00 AM', 'title': 'New Cohort Launch', 'type': 'Launch', 'location': 'C4Y Center', 'color': const Color(0xFFFF3F6B), 'status': 'Invite Only'},
         ]
       },
     ];
@@ -52,7 +52,7 @@ class CalendarModal extends StatelessWidget {
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: 950,
+          maxWidth: 1000,
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
         child: Container(
@@ -61,22 +61,22 @@ class CalendarModal extends StatelessWidget {
             borderRadius: BorderRadius.circular(32),
             border: Border.all(color: Colors.white.withAlpha(20)),
             boxShadow: [
-              BoxShadow(color: Colors.black.withAlpha(150), blurRadius: 50, offset: const Offset(0, 25))
+              BoxShadow(color: Colors.black.withAlpha(180), blurRadius: 60, offset: const Offset(0, 30))
             ],
           ),
           child: Column(
             children: [
-              // Header
+              // Dynamic Header
               _buildHeader(context, isMobile),
 
-              // Schedule List
+              // Scrollable Schedule
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(32, 24, 32, 32),
+                  padding: const EdgeInsets.fromLTRB(40, 24, 40, 40),
                   itemCount: schedule.length,
                   itemBuilder: (context, index) {
                     final monthData = schedule[index];
-                    return _buildMonthSection(monthData, isMobile);
+                    return _buildMonthSection(monthData, isMobile, index);
                   },
                 ),
               ),
@@ -89,34 +89,64 @@ class CalendarModal extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context, bool isMobile) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(32, 32, 24, 32),
+      padding: const EdgeInsets.fromLTRB(40, 40, 32, 40),
       decoration: BoxDecoration(
-        color: Colors.white.withAlpha(5),
+        color: Colors.white.withAlpha(8),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        border: Border(bottom: BorderSide(color: Colors.white.withAlpha(10))),
       ),
       child: Row(
         children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF6B35),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(color: const Color(0xFFFF6B35).withAlpha(100), blurRadius: 20)
+              ],
+            ),
+            child: const Icon(LucideIcons.calendarDays, color: Colors.white, size: 28),
+          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+          const SizedBox(width: 24),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'ACADEMIC SCHEDULE',
-                  style: GoogleFonts.outfit(
-                    color: const Color(0xFFFF6B35),
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2,
-                    fontSize: 12,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'ACADEMIC YEAR 2024-25',
+                      style: GoogleFonts.outfit(
+                        color: const Color(0xFFFF6B35),
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(width: 4, height: 4, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white24)),
+                    const SizedBox(width: 12),
+                    Text(
+                      '5 MONTHS PLANNED',
+                      style: GoogleFonts.outfit(
+                        color: Colors.white38,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Event Calendar 2024-25',
+                  'Interactive Schedule',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: isMobile ? 24 : 34,
+                    fontSize: isMobile ? 28 : 38,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
-                    letterSpacing: -1,
+                    letterSpacing: -1.5,
                   ),
                 ),
               ],
@@ -124,10 +154,11 @@ class CalendarModal extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(LucideIcons.x, color: Colors.white38, size: 22),
+            icon: const Icon(LucideIcons.x, color: Colors.white38, size: 24),
             style: IconButton.styleFrom(
               backgroundColor: Colors.white.withAlpha(15),
               padding: const EdgeInsets.all(12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
           ),
         ],
@@ -135,147 +166,222 @@ class CalendarModal extends StatelessWidget {
     );
   }
 
-  Widget _buildMonthSection(Map<String, dynamic> monthData, bool isMobile) {
+  Widget _buildMonthSection(Map<String, dynamic> monthData, bool isMobile, int monthIndex) {
     final List events = monthData['events'];
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24),
+          padding: const EdgeInsets.only(top: 40, bottom: 24),
           child: Row(
             children: [
-              Text(
-                monthData['month'].toString().toUpperCase(),
-                style: GoogleFonts.outfit(
-                  color: Colors.white38,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                  fontSize: 13,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withAlpha(10),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  monthData['month'].toString().toUpperCase(),
+                  style: GoogleFonts.outfit(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                    fontSize: 12,
+                  ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 20),
               Expanded(child: Container(height: 1, color: Colors.white.withAlpha(10))),
             ],
           ),
         ),
-        ...events.map((ev) => _buildScheduleCard(ev, isMobile)).toList(),
+        ...events.asMap().entries.map((entry) {
+          return _buildScheduleItem(entry.value, isMobile, entry.key == events.length - 1);
+        }).toList(),
       ],
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05);
+    ).animate(delay: (monthIndex * 150).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05);
   }
 
-  Widget _buildScheduleCard(Map<String, dynamic> ev, bool isMobile) {
+  Widget _buildScheduleItem(Map<String, dynamic> ev, bool isMobile, bool isLastInMonth) {
     final color = ev['color'] as Color;
     
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(5),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withAlpha(10)),
-      ),
+    return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Time & Day
-          SizedBox(
-            width: isMobile ? 60 : 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ev['day'],
-                  style: GoogleFonts.plusJakartaSans(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
+          // Timeline Column
+          Column(
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0D0D2B),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: color, width: 4),
+                  boxShadow: [
+                    BoxShadow(color: color.withAlpha(100), blurRadius: 10)
+                  ],
+                ),
+              ),
+              if (!isLastInMonth)
+                Expanded(
+                  child: Container(
+                    width: 2,
+                    color: color.withAlpha(30),
                   ),
                 ),
-                Text(
-                  ev['time'],
-                  style: GoogleFonts.outfit(
-                    color: color,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
-
-          // Divider
-          Container(
-            width: 2,
-            height: 50,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: color.withAlpha(50),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-
-          // Content
+          const SizedBox(width: 24),
+          
+          // Card Content
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        ev['title'],
-                        style: GoogleFonts.plusJakartaSans(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    if (!isMobile)
-                      _typeBadge(ev['type'], color),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(LucideIcons.mapPin, size: 14, color: Colors.white38),
-                    const SizedBox(width: 8),
-                    Text(
-                      ev['location'],
-                      style: GoogleFonts.outfit(color: Colors.white38, fontSize: 14),
-                    ),
-                  ],
-                ),
-                if (isMobile) ...[
-                  const SizedBox(height: 12),
-                  _typeBadge(ev['type'], color),
-                ],
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: _ScheduleCard(ev: ev, isMobile: isMobile, color: color),
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _typeBadge(String type, Color color) {
+class _ScheduleCard extends StatefulWidget {
+  final Map<String, dynamic> ev;
+  final bool isMobile;
+  final Color color;
+  const _ScheduleCard({required this.ev, required this.isMobile, required this.color});
+
+  @override
+  State<_ScheduleCard> createState() => _ScheduleCardState();
+}
+
+class _ScheduleCardState extends State<_ScheduleCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: 300.ms,
+        padding: const EdgeInsets.all(28),
+        decoration: BoxDecoration(
+          color: _isHovered ? Colors.white.withAlpha(8) : Colors.white.withAlpha(3),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: _isHovered ? widget.color.withAlpha(80) : Colors.white.withAlpha(10),
+            width: 1.5,
+          ),
+          boxShadow: _isHovered ? [
+            BoxShadow(color: widget.color.withAlpha(15), blurRadius: 30, offset: const Offset(0, 10))
+          ] : [],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Date Section
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.ev['day'],
+                  style: GoogleFonts.plusJakartaSans(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.ev['time'],
+                  style: GoogleFonts.outfit(
+                    color: Colors.white38,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 32),
+            
+            // Details Section
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.ev['title'],
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                      if (!widget.isMobile) _badge(widget.ev['status'], widget.color),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      _infoTag(LucideIcons.mapPin, widget.ev['location']),
+                      const SizedBox(width: 20),
+                      _infoTag(LucideIcons.tag, widget.ev['type']),
+                    ],
+                  ),
+                  if (widget.isMobile) ...[
+                    const SizedBox(height: 16),
+                    _badge(widget.ev['status'], widget.color),
+                  ],
+                ],
+              ),
+            ),
+            
+            if (!widget.isMobile)
+              const Icon(LucideIcons.chevronRight, color: Colors.white10, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _badge(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
         color: color.withAlpha(20),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: color.withAlpha(50)),
+        border: Border.all(color: color.withAlpha(40)),
       ),
       child: Text(
-        type.toUpperCase(),
-        style: GoogleFonts.outfit(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
-        ),
+        label.toUpperCase(),
+        style: GoogleFonts.outfit(color: color, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
       ),
+    );
+  }
+
+  Widget _infoTag(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: Colors.white24),
+        const SizedBox(width: 8),
+        Text(
+          text,
+          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 14),
+        ),
+      ],
     );
   }
 }
