@@ -154,23 +154,25 @@ class _EventsSectionState extends State<EventsSection> {
                       ],
                     ),
                   ),
-                  if (MediaQuery.of(context).size.width > 600)
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => const CalendarModal(),
-                        );
-                      },
-                      icon: const Icon(LucideIcons.calendar, size: 16),
-                      label: const Text('View Full Calendar'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF0D0D2B),
-                        side: const BorderSide(color: Color(0xFF0D0D2B), width: 2),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => const CalendarModal(),
+                      );
+                    },
+                    icon: const Icon(LucideIcons.calendar, size: 16),
+                    label: const Text('View Full Calendar'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF0D0D2B),
+                      side: const BorderSide(color: Color(0xFF0D0D2B), width: 2),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width > 600 ? 24 : 16, 
+                        vertical: MediaQuery.of(context).size.width > 600 ? 20 : 12
                       ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                     ),
+                  ),
                 ],
               ),
               const SizedBox(height: 48),
