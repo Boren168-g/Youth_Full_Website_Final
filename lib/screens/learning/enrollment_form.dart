@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../providers/auth_provider.dart';
 import 'class_view.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class EnrollmentFormScreen extends StatefulWidget {
   final String className;
@@ -23,6 +22,7 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
   String _experience = 'Beginner';
   String _paymentMethod = 'ABA Bank';
   bool _isLoading = false;
+  String _loadingStatus = 'Processing...';
 
   void _showSuccess() {
     showDialog(
@@ -43,7 +43,7 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
             const SizedBox(height: 24),
             Text('Enrollment Successful!', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            Text('Welcome to ${widget.className}. Your learning journey starts now.', textAlign: TextAlign.center, style: GoogleFonts.outfit(color: Colors.white60, fontSize: 14)),
+            Text('Welcome to ${widget.className}. Your payment has been confirmed.', textAlign: TextAlign.center, style: GoogleFonts.outfit(color: Colors.white60, fontSize: 14)),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -69,9 +69,16 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _loadingStatus = 'Processing Payment...';
+    });
 
     try {
+      // Step 1: Processing
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) setState(() => _loadingStatus = 'Connecting to Cloud...');
+
       final response = await http.post(
         Uri.parse('${auth.baseUrl}/enroll'),
         headers: {'Content-Type': 'application/json'},
@@ -84,17 +91,21 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
           'amount': widget.price,
           'paymentMethod': _paymentMethod,
         }),
-      ).timeout(const Duration(seconds: 45));
+      ).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 201) {
-        if (mounted) _showSuccess();
+        if (mounted) {
+          setState(() => _loadingStatus = 'Finalizing...');
+          await Future.delayed(const Duration(milliseconds: 500));
+          _showSuccess();
+        }
       } else {
-        throw 'Server error';
+        throw 'Server responded with error';
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not process payment. Try again shortly. Error: $e'), backgroundColor: Colors.redAccent)
+          SnackBar(content: Text('Server is busy waking up. Please try clicking "Pay Now" again. Error: $e'), backgroundColor: Colors.redAccent)
         );
       }
     } finally {
@@ -108,15 +119,15 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
       children: [
         Scaffold(
           backgroundColor: const Color(0xFF0D0D2B),
-          appBar: AppBar(title: Text('Enrollment Form'), backgroundColor: Colors.transparent, elevation: 0),
+          appBar: AppBar(title: Text('Enroll: ${widget.className}'), backgroundColor: Colors.transparent, elevation: 0),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Secure Registration', style: GoogleFonts.plusJakartaSans(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text('Secure Enrollment', style: GoogleFonts.plusJakartaSans(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
                 const SizedBox(height: 8),
-                Text('You are enrolling in ${widget.className}', style: GoogleFonts.outfit(color: Colors.white60)),
+                Text('Final step to join the ${widget.className} track.', style: GoogleFonts.outfit(color: Colors.white60)),
                 const SizedBox(height: 32),
                 _label('PHONE NUMBER'),
                 _field(_phoneController, '012 345 678', Icons.phone),
@@ -127,8 +138,6 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
                 _label('EXPERIENCE LEVEL'),
                 _dropdown<String>(['Beginner', 'Intermediate', 'Advanced'], _experience, (v) => setState(() => _experience = v!)),
                 const SizedBox(height: 40),
-                Text('Payment Details', style: GoogleFonts.plusJakartaSans(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.03), borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white10)),
@@ -137,12 +146,12 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Total Amount', style: TextStyle(color: Colors.white60)),
+                          const Text('Total to Pay', style: TextStyle(color: Colors.white60)),
                           Text('\$${widget.price.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
                         ],
                       ),
                       const Divider(height: 40, color: Colors.white10),
-                      _label('PAYMENT METHOD'),
+                      _label('CHOOSE PAYMENT METHOD'),
                       _dropdown<String>(['ABA Bank', 'Wing', 'Credit Card'], _paymentMethod, (v) => setState(() => _paymentMethod = v!)),
                     ],
                   ),
@@ -156,15 +165,23 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
                     child: Text(_isLoading ? 'Processing...' : 'Confirm & Pay Now', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ),
-                const SizedBox(height: 40),
               ],
             ),
           ),
         ),
         if (_isLoading)
           Container(
-            color: Colors.black54,
-            child: const Center(child: CircularProgressIndicator(color: Color(0xFF00C9A7))),
+            color: Colors.black87,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(color: Color(0xFF00C9A7)),
+                  const SizedBox(height: 24),
+                  Text(_loadingStatus, style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+                ],
+              ),
+            ),
           ),
       ],
     );
