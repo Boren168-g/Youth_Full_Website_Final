@@ -74,19 +74,29 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/check-registration', async (req, res) => {
     const { userId, className } = req.query;
     try {
+      console.log(`Checking registration for user ${userId} in ${className}`);
       const [results] = await pool.query('SELECT * FROM registrations WHERE user_id = ? AND class_name = ?', [userId, className]);
       res.json({ isRegistered: results.length > 0 });
     } catch (err) {
-      res.status(500).json({ message: 'Error checking status' });
+      console.error('Check Registration Error:', err.message);
+      res.status(500).json({ message: 'Error checking status', error: err.message });
     }
 });
 
 app.post('/api/enroll', async (req, res) => {
     const { userId, className, phone, age, experience, amount, paymentMethod } = req.body;
     try {
-      await pool.query('INSERT INTO registrations (user_id, class_name, phone, age, experience_level, amount, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, "paid")', [userId, className, phone, age, experience, amount, paymentMethod]);
+      console.log(`Processing enrollment for user ${userId} in ${className}...`);
+      await pool.query(
+        'INSERT INTO registrations (user_id, class_name, phone, age, experience_level, amount, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, "paid")',
+        [userId, className, phone, age, experience, amount, paymentMethod]
+      );
+      console.log('Enrollment successful.');
       res.status(201).json({ message: 'Enrolled' });
-    } catch (err) { res.status(500).json({ message: 'Error' }); }
+    } catch (err) {
+      console.error('Enrollment Error:', err.message);
+      res.status(500).json({ message: 'Database error during enrollment', detail: err.message });
+    }
 });
 
 app.get('/api/check-event-booking', async (req, res) => {

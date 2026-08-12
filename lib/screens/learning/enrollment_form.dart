@@ -45,7 +45,7 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
           'amount': widget.price,
           'paymentMethod': _paymentMethod,
         }),
-      );
+      ).timeout(const Duration(seconds: 60)); // Added timeout
 
       if (response.statusCode == 201) {
         if (mounted) {
@@ -54,9 +54,20 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
             MaterialPageRoute(builder: (context) => ClassViewScreen(className: widget.className)),
           );
         }
+      } else {
+        final data = jsonDecode(response.body);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${data['message'] ?? 'Enrollment failed'}'))
+          );
+        }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error during enrollment')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Connection timeout or error. The cloud server might be busy.'))
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
