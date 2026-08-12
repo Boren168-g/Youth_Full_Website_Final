@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'event_registration_modal.dart';
+import 'calendar_modal.dart';
 import '../providers/auth_provider.dart';
 
 class EventsSection extends StatefulWidget {
@@ -155,7 +156,12 @@ class _EventsSectionState extends State<EventsSection> {
                   ),
                   if (MediaQuery.of(context).size.width > 600)
                     OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const CalendarModal(),
+                        );
+                      },
                       icon: const Icon(LucideIcons.calendar, size: 16),
                       label: const Text('View Full Calendar'),
                       style: OutlinedButton.styleFrom(
