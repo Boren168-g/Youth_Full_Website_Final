@@ -195,11 +195,16 @@ class _EventsSectionState extends State<EventsSection> {
                 SizedBox(width: double.infinity, child: _fullCalendarBtn()),
               ],
               const SizedBox(height: 48),
-              ...events.map((ev) => _EventCard(
-                    event: ev,
-                    onTap: () => _openRegistration(context, ev),
-                    isBooked: _bookingStatus[ev['title'].toString()] ?? false,
-                  )).animate(interval: 100.ms).fadeIn(duration: 500.ms).slideY(begin: 0.1),
+              // Fixing the animation call to apply to individual children
+              ...events.asMap().entries.map((entry) {
+                int index = entry.key;
+                var ev = entry.value;
+                return _EventCard(
+                  event: ev,
+                  onTap: () => _openRegistration(context, ev),
+                  isBooked: _bookingStatus[ev['title'].toString()] ?? false,
+                ).animate(delay: (index * 100).ms).fadeIn(duration: 500.ms).slideY(begin: 0.1);
+              }),
             ],
           ),
         ),
