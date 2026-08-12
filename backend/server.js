@@ -30,27 +30,48 @@ const dbConfig = {
   ssl: { rejectUnauthorized: false }
 };
 
-const db = mysql.createConnection(dbConfig).promise();
+// Database Pool for stability
+const pool = mysql.createPool({
+  ...dbConfig,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+}).promise();
 
-// 2. API Endpoints
-app.get('/api/status', (req, res) => res.json({ status: 'ok', database: 'connected' }));
+// ... (existing welcome route) ...
 
-app.post('/api/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
-  try {
-    const [result] = await db.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', [name, email.toLowerCase().trim(), password, role]);
-    res.status(201).json({ user: { id: result.insertId, name, email, role } });
-  } catch (err) { res.status(400).json({ message: 'Email already exists' }); }
-});
+function registerEndpoints() {
+  app.get('/api/status', async (req, res) => {
+    try {
+      await pool.query('SELECT 1');
+      res.json({ status: 'ok', database: 'connected' });
+    } catch (err) {
+      res.status(500).json({ status: 'error', message: err.message });
+    }
+  });
 
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const [results] = await db.query('SELECT * FROM users WHERE email = ? AND password = ?', [email.toLowerCase().trim(), password]);
-    if (results.length === 0) return res.status(401).json({ message: 'Invalid credentials' });
-    res.json({ user: results[0] });
-  } catch (err) { res.status(500).json({ message: 'Server error' }); }
-});
+  app.post('/api/register', async (req, res) => {
+    const { name, email, password, role } = req.body;
+    try {
+      const [result] = await pool.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+      [name, email.toLowerCase().trim(), password, role]);
+      res.status(201).json({ user: { id: result.insertId, name, email, role, createdAt: new Date() } });
+    } catch (err) {
+      res.status(400).json({ message: 'Email already exists or invalid data' });
+    }
+  });
+
+  app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const [results] = await pool.query('SELECT * FROM users WHERE email = ? AND password = ?', [email.toLowerCase().trim(), password]);
+      if (results.length === 0) return res.status(401).json({ message: 'Invalid credentials' });
+      const user = results[0];
+      res.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role, createdAt: user.createdAt } });
+    } catch (err) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
