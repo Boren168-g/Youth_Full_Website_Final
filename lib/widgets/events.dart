@@ -4,7 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'event_registration_modal.dart';
 import 'calendar_modal.dart';
 import '../providers/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -83,7 +82,7 @@ class _EventsSectionState extends State<EventsSection> {
                     icon: const Icon(LucideIcons.calendar, size: 18),
                     label: const Text('View Full Calendar'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.05),
+                      backgroundColor: Colors.white.withAlpha(13), // Fixed deprecation (approx 0.05 opacity)
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100), side: const BorderSide(color: Colors.white10)),
@@ -113,7 +112,11 @@ class _EventCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: Colors.white.withOpacity(0.02), borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.white.withOpacity(0.05))),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(5), // Fixed deprecation (approx 0.02 opacity)
+        borderRadius: BorderRadius.circular(24), 
+        border: Border.all(color: Colors.white.withAlpha(13)), // Fixed deprecation
+      ),
       child: Row(
         children: [
           Container(
@@ -128,7 +131,7 @@ class _EventCard extends StatelessWidget {
               Text(event['location'], style: const TextStyle(color: Colors.white38, fontSize: 13)),
             ]),
           ),
-          Icon(LucideIcons.chevronRight, color: color.withOpacity(0.5)),
+          Icon(LucideIcons.chevronRight, color: color.withAlpha(128)), // Fixed deprecation (0.5 opacity)
         ],
       ),
     );
