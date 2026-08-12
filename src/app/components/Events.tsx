@@ -1,189 +1,129 @@
-import { Calendar, MapPin, ArrowRight, Clock } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Clock, X } from "lucide-react";
+import { useState } from "react";
 
 const events = [
   {
-    date: { month: "JUL", day: "12" },
-    title: "Summer Bootcamp Kickoff",
-    type: "In-Person",
-    location: "Chicago, IL — Millennium Park Pavilion",
-    time: "9:00 AM – 12:00 PM",
-    desc: "Meet your cohort, set up your dev environment, and write your very first Python program.",
+    date: { month: "SEP", day: "15" },
+    title: "Phnom Penh Tech Summit",
+    type: "Conference",
+    location: "Factory Phnom Penh",
+    time: "8:30 AM – 4:30 PM",
+    desc: "Join local developers and startups for workshops, networking, and the future of tech in Cambodia.",
     color: "#ff6b35",
-    spots: "48 spots left",
+    spots: "Limited seats",
   },
   {
-    date: { month: "JUL", day: "19" },
-    title: "Parent & Family Info Night",
-    type: "Virtual",
-    location: "Zoom (link sent after registration)",
-    time: "7:00 PM – 8:30 PM",
-    desc: "Learn how C4Y works, meet the instructors, and ask every question you have before your child starts.",
+    date: { month: "OCT", day: "05" },
+    title: "Siem Reap Coding Bootcamp",
+    type: "Workshop",
+    location: "Heritage Hub",
+    time: "1:00 PM – 5:00 PM",
+    desc: "A hands-on intensive session for beginners. Learn web development basics near the temples.",
     color: "#1e3fce",
-    spots: "Open",
+    spots: "20 spots left",
   },
   {
-    date: { month: "AUG", day: "02" },
-    title: "AI Demo Day — Cohort 14",
-    type: "In-Person + Livestream",
-    location: "Detroit, MI — TechTown",
-    time: "2:00 PM – 5:00 PM",
-    desc: "Watch our graduating AI Lab students present original machine learning projects to a panel of industry judges.",
+    date: { month: "OCT", day: "22" },
+    title: "Khmer AI & Data Night",
+    type: "Virtual",
+    location: "Zoom / Facebook Live",
+    time: "7:00 PM – 9:00 PM",
+    desc: "Exploring how Artificial Intelligence is being used in the Khmer language and local industries.",
     color: "#00c9a7",
-    spots: "Public — Free admission",
+    spots: "Open registration",
   },
   {
-    date: { month: "AUG", day: "23" },
-    title: "Scholarship Application Deadline",
-    type: "Online",
-    location: "codeforyouth.org/apply",
-    time: "11:59 PM EST",
-    desc: "Last chance to apply for our Fall 2025 cohort. Complete applications are reviewed within 2 weeks.",
+    date: { month: "NOV", day: "12" },
+    title: "Battambang Youth Hackathon",
+    type: "Competition",
+    location: "University of Battambang",
+    time: "2 Days Event",
+    desc: "Build solutions for local challenges. Teams will compete for prizes and mentorship.",
     color: "#ffd23f",
-    spots: "12 seats remaining",
+    spots: "Team only",
   },
 ];
 
 export function Events() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
-    <section id="events" style={{ background: "#fff", padding: "100px 0" }}>
+    <section id="events" style={{ background: "#0d0d2b", padding: "100px 0" }}>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-12 gap-6">
           <div>
-            <p
-              className="font-semibold text-sm tracking-widest mb-4 uppercase"
-              style={{ fontFamily: "'Outfit', sans-serif", color: "#ff6b35" }}
-            >
-              Upcoming
-            </p>
-            <h2
-              style={{
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: "clamp(2rem, 4vw, 3rem)",
-                fontWeight: 800,
-                color: "#0d0d2b",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Events & Deadlines
-            </h2>
+            <p className="font-semibold text-sm tracking-widest mb-4 uppercase" style={{ fontFamily: "'Outfit', sans-serif", color: "#ff6b35" }}>Upcoming</p>
+            <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#fff", lineHeight: 1.1 }}>Events in Cambodia</h2>
           </div>
           <button
-            className="flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm border-2 w-fit transition-all hover:scale-105"
-            style={{
-              fontFamily: "'Outfit', sans-serif",
-              borderColor: "#0d0d2b",
-              color: "#0d0d2b",
-            }}
+            onClick={() => setModalOpen(true)}
+            className="flex items-center gap-2 px-8 py-4 rounded-full font-bold text-sm border-2 transition-all hover:bg-white/5 active:scale-95"
+            style={{ fontFamily: "'Outfit', sans-serif", borderColor: "rgba(255,255,255,0.2)", color: "#fff" }}
           >
-            Full Calendar
-            <ArrowRight className="w-4 h-4" />
+            <Calendar className="w-4 h-4" />
+            View Full Calendar
           </button>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {events.map((ev) => (
-            <div
-              key={ev.title}
-              className="grid md:grid-cols-[auto_1fr_auto] gap-6 items-center p-6 rounded-2xl group hover:-translate-y-0.5 transition-all cursor-pointer"
-              style={{
-                background: "#f8f7f4",
-                border: "1px solid rgba(13,13,43,0.06)",
-              }}
-            >
-              {/* Date */}
-              <div
-                className="w-16 h-16 rounded-xl flex flex-col items-center justify-center shrink-0"
-                style={{ background: ev.color }}
-              >
-                <span
-                  className="text-xs text-white/80 font-semibold"
-                  style={{ fontFamily: "'Outfit', sans-serif" }}
-                >
-                  {ev.date.month}
-                </span>
-                <span
-                  className="text-2xl font-black text-white leading-none"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                >
-                  {ev.date.day}
-                </span>
+        <div className="flex flex-col gap-5">
+          {events.map((ev, i) => (
+            <div key={ev.title} className="grid md:grid-cols-[auto_1fr_auto] gap-6 items-center p-8 rounded-3xl transition-all cursor-pointer border border-white/5 hover:border-white/20 hover:bg-white/[0.02]" style={{ background: "rgba(255,255,255,0.02)" }}>
+              <div className="w-20 h-20 rounded-2xl flex flex-col items-center justify-center shrink-0 shadow-lg" style={{ background: ev.color }}>
+                <span className="text-xs text-white/80 font-bold">{ev.date.month}</span>
+                <span className="text-3xl font-black text-white leading-none">{ev.date.day}</span>
               </div>
-
-              {/* Info */}
               <div>
-                <div className="flex flex-wrap gap-2 items-center mb-1">
-                  <h3
-                    className="font-bold"
-                    style={{
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                      color: "#0d0d2b",
-                      fontSize: "1.05rem",
-                    }}
-                  >
-                    {ev.title}
-                  </h3>
-                  <span
-                    className="px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                    style={{
-                      background: "#eeede8",
-                      color: "#6b6b80",
-                      fontFamily: "'Outfit', sans-serif",
-                    }}
-                  >
-                    {ev.type}
-                  </span>
+                <div className="flex flex-wrap gap-3 items-center mb-2">
+                  <h3 className="font-bold text-xl text-white">{ev.title}</h3>
+                  <span className="px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase" style={{ background: "rgba(255,255,255,0.05)", color: ev.color, border: `1px solid ${ev.color}44` }}>{ev.type}</span>
                 </div>
-
-                <div className="flex flex-wrap gap-4 text-sm mb-2">
-                  <span
-                    className="flex items-center gap-1.5"
-                    style={{ fontFamily: "'Outfit', sans-serif", color: "#6b6b80" }}
-                  >
-                    <MapPin className="w-3.5 h-3.5" />
-                    {ev.location}
-                  </span>
-                  <span
-                    className="flex items-center gap-1.5"
-                    style={{ fontFamily: "'Outfit', sans-serif", color: "#6b6b80" }}
-                  >
-                    <Clock className="w-3.5 h-3.5" />
-                    {ev.time}
-                  </span>
+                <div className="flex flex-wrap gap-6 text-sm mb-3 opacity-60 text-white">
+                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4" />{ev.location}</span>
+                  <span className="flex items-center gap-2"><Clock className="w-4 h-4" />{ev.time}</span>
                 </div>
-
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ fontFamily: "'Outfit', sans-serif", color: "#4a4a6a" }}
-                >
-                  {ev.desc}
-                </p>
+                <p className="text-sm opacity-50 text-white leading-relaxed max-w-2xl">{ev.desc}</p>
               </div>
-
-              {/* CTA */}
-              <div className="flex flex-col items-end gap-2 shrink-0">
-                <span
-                  className="text-xs font-semibold"
-                  style={{ fontFamily: "'Outfit', sans-serif", color: ev.color }}
-                >
-                  {ev.spots}
-                </span>
-                <button
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-105"
-                  style={{
-                    background: ev.color,
-                    color: "#fff",
-                    fontFamily: "'Outfit', sans-serif",
-                  }}
-                >
-                  Register
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+              <div className="flex flex-col items-end gap-3 shrink-0">
+                <span className="text-xs font-bold" style={{ color: ev.color }}>{ev.spots}</span>
+                <button className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:opacity-90" style={{ background: ev.color, color: "#fff" }}>Secure Seat</button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm" onClick={() => setModalOpen(false)}>
+          <div className="w-full max-w-2xl bg-[#111130] rounded-[32px] border border-white/10 overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="p-8 border-b border-white/5 flex justify-between items-center">
+              <div>
+                <p className="text-[#ff6b35] text-xs font-bold tracking-widest uppercase mb-1">Schedule</p>
+                <h3 className="text-2xl font-bold text-white">Full Event Calendar</h3>
+              </div>
+              <button onClick={() => setModalOpen(false)} className="p-2 rounded-full hover:bg-white/5 text-white/40"><X /></button>
+            </div>
+            <div className="p-8 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-4">
+                {events.map((ev) => (
+                  <div key={ev.title} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+                    <div className="text-center w-12 shrink-0">
+                      <p className="text-[10px] font-bold text-white/40 leading-none">{ev.date.month}</p>
+                      <p className="text-xl font-bold text-white">{ev.date.day}</p>
+                    </div>
+                    <div className="h-8 w-px bg-white/10" />
+                    <div>
+                      <p className="font-bold text-white">{ev.title}</p>
+                      <p className="text-xs text-white/40">{ev.location}</p>
+                    </div>
+                  </div>
+                ))}
+                <div className="p-8 text-center opacity-30 text-white italic text-sm">More events being added soon...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
