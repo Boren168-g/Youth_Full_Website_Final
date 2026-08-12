@@ -6,7 +6,7 @@ const app = express();
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] }));
 app.use(express.json());
 
-// 1. Welcome Page (Defined at the TOP so it always works)
+// 1. Welcome Page
 app.get('/', (req, res) => {
   res.send(`
     <div style="font-family: sans-serif; text-align: center; padding-top: 100px; background-color: #0d0d2b; color: white; min-height: 100vh;">
@@ -74,11 +74,9 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/check-registration', async (req, res) => {
     const { userId, className } = req.query;
     try {
-      console.log(`Checking registration for user ${userId} in ${className}`);
       const [results] = await pool.query('SELECT * FROM registrations WHERE user_id = ? AND class_name = ?', [userId, className]);
       res.json({ isRegistered: results.length > 0 });
     } catch (err) {
-      console.error('Check Registration Error:', err.message);
       res.status(500).json({ message: 'Error checking status', error: err.message });
     }
 });
@@ -86,16 +84,15 @@ app.get('/api/check-registration', async (req, res) => {
 app.post('/api/enroll', async (req, res) => {
     const { userId, className, phone, age, experience, amount, paymentMethod } = req.body;
     try {
-      console.log(`Processing enrollment for user ${userId} in ${className}...`);
+      // Fixed: Using single quotes for string literal 'paid' to avoid "Unknown column" error
       await pool.query(
-        'INSERT INTO registrations (user_id, class_name, phone, age, experience_level, amount, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, "paid")',
+        'INSERT INTO registrations (user_id, class_name, phone, age, experience_level, amount, payment_method, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, \'paid\')',
         [userId, className, phone, age, experience, amount, paymentMethod]
       );
-      console.log('Enrollment successful.');
       res.status(201).json({ message: 'Enrolled' });
     } catch (err) {
       console.error('Enrollment Error:', err.message);
-      res.status(500).json({ message: 'Database error during enrollment', detail: err.message });
+      res.status(500).json({ message: 'Database error', detail: err.message });
     }
 });
 
@@ -110,7 +107,7 @@ app.get('/api/check-event-booking', async (req, res) => {
 app.post('/api/book-event', async (req, res) => {
     const { userId, eventTitle } = req.body;
     try {
-      await pool.query('INSERT INTO event_bookings (user_id, event_title, payment_status) VALUES (?, ?, "paid")', [userId, eventTitle]);
+      await pool.query('INSERT INTO event_bookings (user_id, event_title, payment_status) VALUES (?, ?, \'paid\')', [userId, eventTitle]);
       res.status(201).json({ message: 'Booked' });
     } catch (err) { res.status(500).json({ message: 'Error' }); }
 });
@@ -123,13 +120,12 @@ app.post('/api/contact', async (req, res) => {
     } catch (err) { res.status(500).json({ message: 'Error' }); }
 });
 
-// 3. Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
-    // Create tables in background
+    // Setup tables
     pool.query(`CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255) UNIQUE, password VARCHAR(255), role VARCHAR(50), createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
-    pool.query(`CREATE TABLE IF NOT EXISTS registrations (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, class_name VARCHAR(255), phone VARCHAR(20), age INT, experience_level VARCHAR(50), amount DECIMAL(10,2), payment_method VARCHAR(50), payment_status VARCHAR(50), registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
+    pool.query(`CREATE TABLE IF NOT EXISTS registrations (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, class_name VARCHAR(255), phone VARCHAR(20), age INT, experience_level VARCHAR(50), amount DECIMAL(10,2), payment_method VARCHAR(50), payment_status ENUM('unpaid', 'paid') DEFAULT 'paid', registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
     pool.query(`CREATE TABLE IF NOT EXISTS event_bookings (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, event_title VARCHAR(255), payment_status VARCHAR(50), booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
     pool.query(`CREATE TABLE IF NOT EXISTS contacts (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), message TEXT, createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
 });
