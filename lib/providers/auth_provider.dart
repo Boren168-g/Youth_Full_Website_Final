@@ -29,7 +29,7 @@ class AuthProvider extends ChangeNotifier {
         Uri.parse('$baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60)); // Increased to 60 seconds
 
       final data = jsonDecode(response.body);
 
@@ -42,7 +42,7 @@ class AuthProvider extends ChangeNotifier {
         _error = data['message'] ?? 'Login failed';
       }
     } catch (e) {
-      _error = 'Error: $e\nURL: $baseUrl';
+      _error = 'The server is currently waking up. Please wait 10 seconds and try again.';
       debugPrint('Auth Error: $e');
     }
     
@@ -66,7 +66,7 @@ class AuthProvider extends ChangeNotifier {
           'password': password,
           'role': role.name,
         }),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 60)); // Increased to 60 seconds
 
       final data = jsonDecode(response.body);
 
@@ -79,7 +79,7 @@ class AuthProvider extends ChangeNotifier {
         _error = data['message'] ?? 'Registration failed';
       }
     } catch (e) {
-      _error = 'Error: $e\nURL: $baseUrl';
+      _error = 'The server is currently waking up. Please wait 10 seconds and try again.';
       debugPrint('Auth Error: $e');
     }
     
@@ -98,22 +98,21 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/apply'),
+        Uri.parse('$baseUrl/enroll'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'userId': _user!.id,
-          'programName': programName,
+          'className': programName,
         }),
-      );
+      ).timeout(const Duration(seconds: 60));
 
-      final data = jsonDecode(response.body);
       if (response.statusCode == 201) {
-        return {'success': true, 'message': data['message']};
+        return {'success': true, 'message': 'Successfully applied!'};
       } else {
-        return {'success': false, 'message': data['message'] ?? 'Failed to apply.'};
+        return {'success': false, 'message': 'Failed to apply.'};
       }
     } catch (e) {
-      return {'success': false, 'message': 'Connection error.'};
+      return {'success': false, 'message': 'Server is busy. Try again shortly.'};
     }
   }
 }
