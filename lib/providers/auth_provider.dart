@@ -13,6 +13,7 @@ class AuthProvider extends ChangeNotifier {
   String? get error => _error;
 
   String get baseUrl {
+    // Ensuring no double slashes and correct path
     return 'https://youth-full-website-final.onrender.com/api';
   }
 
@@ -22,25 +23,27 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      debugPrint('Attempting Cloud Login (Timeout: 120s)...');
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email.trim(), 'password': password}),
-      ).timeout(const Duration(seconds: 120)); // Increased to 120 seconds
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({'email': email.trim().toLowerCase(), 'password': password}),
+      ).timeout(const Duration(seconds: 120));
+
+      final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['user'] != null) {
-          _user = User.fromJson(data['user']);
-          _loading = false;
-          notifyListeners();
-          return true;
-        }
+        _user = User.fromJson(data['user']);
+        _loading = false;
+        notifyListeners();
+        return true;
+      } else {
+        _error = data['message'] ?? 'Login failed (Status: ${response.statusCode})';
       }
-      _error = "Server response error. Please wait 10 seconds and try again.";
     } catch (e) {
-      _error = "Server is waking up (Cloud Wake-up). Please wait 15 seconds and try clicking Login again. [Code: 120s-V3]";
+      _error = "Connection Error: $e\nHint: If this is instant, please Hard Refresh (Ctrl+F5). [V4]";
       debugPrint('Auth Error: $e');
     }
     
@@ -55,28 +58,32 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      debugPrint('Attempting Cloud Register (Timeout: 120s)...');
       final response = await http.post(
         Uri.parse('$baseUrl/register'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         body: jsonEncode({
           'name': name.trim(),
-          'email': email.trim(),
+          'email': email.trim().toLowerCase(),
           'password': password,
           'role': role.name,
         }),
-      ).timeout(const Duration(seconds: 120)); // Increased to 120 seconds
+      ).timeout(const Duration(seconds: 120));
+
+      final data = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
-        final data = jsonDecode(response.body);
         _user = User.fromJson(data['user']);
         _loading = false;
         notifyListeners();
         return true;
+      } else {
+        _error = data['message'] ?? 'Registration failed (Status: ${response.statusCode})';
       }
-      _error = "Registration error. Try again.";
     } catch (e) {
-      _error = "Server is waking up. Please wait 15 seconds and try clicking Create Account again. [Code: 120s-V3]";
+      _error = "Connection Error: $e\nHint: Try again in 10 seconds. [V4]";
       debugPrint('Auth Error: $e');
     }
     
@@ -92,23 +99,14 @@ class AuthProvider extends ChangeNotifier {
 
   Future<Map<String, dynamic>> applyToProgram(String programName) async {
     if (_user == null) return {'success': false, 'message': 'Please sign in first.'};
-
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/enroll'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'userId': _user!.id,
-          'className': programName,
-        }),
+        body: jsonEncode({'userId': _user!.id, 'className': programName}),
       ).timeout(const Duration(seconds: 60));
-
-      if (response.statusCode == 201) {
-        return {'success': true, 'message': 'Successfully applied!'};
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Server is busy. Try again shortly.'};
-    }
-    return {'success': false, 'message': 'Action failed.'};
+      if (response.statusCode == 201) return {'success': true, 'message': 'Success!'};
+    } catch (e) {}
+    return {'success': false, 'message': 'Error. Try again.'};
   }
 }
