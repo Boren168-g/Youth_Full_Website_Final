@@ -100,12 +100,13 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
           _showSuccess();
         }
       } else {
-        throw 'Server responded with error';
+        final errorData = jsonDecode(response.body);
+        throw errorData['detail'] ?? errorData['message'] ?? 'Server error ${response.statusCode}';
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Server is busy waking up. Please try clicking "Pay Now" again. Error: $e'), backgroundColor: Colors.redAccent)
+          SnackBar(content: Text('Payment Error: $e'), backgroundColor: Colors.redAccent, duration: const Duration(seconds: 10))
         );
       }
     } finally {
