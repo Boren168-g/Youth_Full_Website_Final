@@ -8,7 +8,9 @@ class CalendarModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isMobile = MediaQuery.of(context).size.width < 800;
+    final size = MediaQuery.of(context).size;
+    bool isMobile = size.width < 700;
+    bool isTablet = size.width >= 700 && size.width < 1000;
 
     final schedule = [
       {
@@ -53,12 +55,12 @@ class CalendarModal extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: 1000,
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
+          maxHeight: size.height * 0.9,
         ),
         child: Container(
           decoration: BoxDecoration(
             color: const Color(0xFF0D0D2B),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(isMobile ? 24 : 32),
             border: Border.all(color: Colors.white.withAlpha(20)),
             boxShadow: [
               BoxShadow(color: Colors.black.withAlpha(180), blurRadius: 60, offset: const Offset(0, 30))
@@ -66,17 +68,13 @@ class CalendarModal extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Dynamic Header
               _buildHeader(context, isMobile),
-
-              // Scrollable Schedule
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(40, 24, 40, 40),
+                  padding: EdgeInsets.fromLTRB(isMobile ? 20 : 40, 24, isMobile ? 20 : 40, 40),
                   itemCount: schedule.length,
                   itemBuilder: (context, index) {
-                    final monthData = schedule[index];
-                    return _buildMonthSection(monthData, isMobile, index);
+                    return _buildMonthSection(schedule[index], isMobile, index);
                   },
                 ),
               ),
@@ -89,64 +87,48 @@ class CalendarModal extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context, bool isMobile) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(40, 40, 32, 40),
+      padding: EdgeInsets.fromLTRB(isMobile ? 24 : 40, isMobile ? 32 : 40, isMobile ? 16 : 32, isMobile ? 32 : 40),
       decoration: BoxDecoration(
         color: Colors.white.withAlpha(8),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(isMobile ? 24 : 32)),
         border: Border(bottom: BorderSide(color: Colors.white.withAlpha(10))),
       ),
       child: Row(
         children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF6B35),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(color: const Color(0xFFFF6B35).withAlpha(100), blurRadius: 20)
-              ],
-            ),
-            child: const Icon(LucideIcons.calendarDays, color: Colors.white, size: 28),
-          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
-          const SizedBox(width: 24),
+          if (!isMobile) ...[
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6B35),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [BoxShadow(color: const Color(0xFFFF6B35).withAlpha(100), blurRadius: 20)],
+              ),
+              child: const Icon(LucideIcons.calendarDays, color: Colors.white, size: 28),
+            ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+            const SizedBox(width: 24),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      'ACADEMIC YEAR 2024-25',
-                      style: GoogleFonts.outfit(
-                        color: const Color(0xFFFF6B35),
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(width: 4, height: 4, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white24)),
-                    const SizedBox(width: 12),
-                    Text(
-                      '5 MONTHS PLANNED',
-                      style: GoogleFonts.outfit(
-                        color: Colors.white38,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
                 Text(
-                  'Interactive Schedule',
+                  'ACADEMIC YEAR 2024-25',
+                  style: GoogleFonts.outfit(
+                    color: const Color(0xFFFF6B35),
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Full Schedule',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: isMobile ? 28 : 38,
+                    fontSize: isMobile ? 24 : 36,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
-                    letterSpacing: -1.5,
+                    letterSpacing: -1,
                   ),
                 ),
               ],
@@ -154,11 +136,11 @@ class CalendarModal extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(LucideIcons.x, color: Colors.white38, size: 24),
+            icon: const Icon(LucideIcons.x, color: Colors.white38, size: 22),
             style: IconButton.styleFrom(
               backgroundColor: Colors.white.withAlpha(15),
-              padding: const EdgeInsets.all(12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              padding: const EdgeInsets.all(10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ],
@@ -168,31 +150,23 @@ class CalendarModal extends StatelessWidget {
 
   Widget _buildMonthSection(Map<String, dynamic> monthData, bool isMobile, int monthIndex) {
     final List events = monthData['events'];
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 40, bottom: 24),
+          padding: const EdgeInsets.only(top: 32, bottom: 20),
           child: Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(10),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  monthData['month'].toString().toUpperCase(),
-                  style: GoogleFonts.outfit(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 2,
-                    fontSize: 12,
-                  ),
+              Text(
+                monthData['month'].toString().toUpperCase(),
+                style: GoogleFonts.outfit(
+                  color: Colors.white.withAlpha(150),
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                  fontSize: 11,
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 16),
               Expanded(child: Container(height: 1, color: Colors.white.withAlpha(10))),
             ],
           ),
@@ -201,46 +175,33 @@ class CalendarModal extends StatelessWidget {
           return _buildScheduleItem(entry.value, isMobile, entry.key == events.length - 1);
         }).toList(),
       ],
-    ).animate(delay: (monthIndex * 150).ms).fadeIn(duration: 500.ms).slideX(begin: 0.05);
+    ).animate(delay: (monthIndex * 100).ms).fadeIn(duration: 400.ms);
   }
 
   Widget _buildScheduleItem(Map<String, dynamic> ev, bool isMobile, bool isLastInMonth) {
     final color = ev['color'] as Color;
-    
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Timeline Column
           Column(
             children: [
               Container(
-                width: 20,
-                height: 20,
+                width: 14, height: 14,
                 decoration: BoxDecoration(
                   color: const Color(0xFF0D0D2B),
                   shape: BoxShape.circle,
-                  border: Border.all(color: color, width: 4),
-                  boxShadow: [
-                    BoxShadow(color: color.withAlpha(100), blurRadius: 10)
-                  ],
+                  border: Border.all(color: color, width: 3),
                 ),
               ),
               if (!isLastInMonth)
-                Expanded(
-                  child: Container(
-                    width: 2,
-                    color: color.withAlpha(30),
-                  ),
-                ),
+                Expanded(child: Container(width: 1.5, color: color.withAlpha(30))),
             ],
           ),
-          const SizedBox(width: 24),
-          
-          // Card Content
+          const SizedBox(width: 16),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 32),
+              padding: const EdgeInsets.only(bottom: 24),
               child: _ScheduleCard(ev: ev, isMobile: isMobile, color: color),
             ),
           ),
@@ -270,86 +231,56 @@ class _ScheduleCardState extends State<_ScheduleCard> {
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: 300.ms,
-        padding: const EdgeInsets.all(28),
+        padding: EdgeInsets.all(widget.isMobile ? 20 : 24),
         decoration: BoxDecoration(
           color: _isHovered ? Colors.white.withAlpha(8) : Colors.white.withAlpha(3),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: _isHovered ? widget.color.withAlpha(80) : Colors.white.withAlpha(10),
-            width: 1.5,
+            width: 1,
           ),
-          boxShadow: _isHovered ? [
-            BoxShadow(color: widget.color.withAlpha(15), blurRadius: 30, offset: const Offset(0, 10))
-          ] : [],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Date Section
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.ev['day'],
-                  style: GoogleFonts.plusJakartaSans(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    height: 1,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  widget.ev['time'],
-                  style: GoogleFonts.outfit(
-                    color: Colors.white38,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 32),
-            
-            // Details Section
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          widget.ev['title'],
-                          style: GoogleFonts.plusJakartaSans(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
+                      Text(
+                        widget.ev['title'],
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white,
+                          fontSize: widget.isMobile ? 16 : 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (!widget.isMobile) _badge(widget.ev['status'], widget.color),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${widget.ev['day']} ${widget.ev['month']?.toString().split(' ')[0] ?? ""} • ${widget.ev['time']}',
+                        style: GoogleFonts.outfit(color: widget.color, fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      _infoTag(LucideIcons.mapPin, widget.ev['location']),
-                      const SizedBox(width: 20),
-                      _infoTag(LucideIcons.tag, widget.ev['type']),
-                    ],
-                  ),
-                  if (widget.isMobile) ...[
-                    const SizedBox(height: 16),
-                    _badge(widget.ev['status'], widget.color),
-                  ],
-                ],
-              ),
+                ),
+                if (!widget.isMobile) _badge(widget.ev['status'], widget.color),
+              ],
             ),
-            
-            if (!widget.isMobile)
-              const Icon(LucideIcons.chevronRight, color: Colors.white10, size: 20),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 16, runSpacing: 8,
+              children: [
+                _infoTag(LucideIcons.mapPin, widget.ev['location']),
+                _infoTag(LucideIcons.tag, widget.ev['type']),
+              ],
+            ),
+            if (widget.isMobile) ...[
+              const SizedBox(height: 16),
+              _badge(widget.ev['status'], widget.color),
+            ],
           ],
         ),
       ),
@@ -358,7 +289,7 @@ class _ScheduleCardState extends State<_ScheduleCard> {
 
   Widget _badge(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: color.withAlpha(20),
         borderRadius: BorderRadius.circular(100),
@@ -366,7 +297,7 @@ class _ScheduleCardState extends State<_ScheduleCard> {
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.outfit(color: color, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+        style: GoogleFonts.outfit(color: color, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 0.5),
       ),
     );
   }
@@ -376,10 +307,13 @@ class _ScheduleCardState extends State<_ScheduleCard> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: Colors.white24),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: GoogleFonts.outfit(color: Colors.white38, fontSize: 14),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            text,
+            style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
