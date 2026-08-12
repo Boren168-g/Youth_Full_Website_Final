@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'event_registration_modal.dart';
 import 'calendar_modal.dart';
 import '../providers/auth_provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class EventsSection extends StatefulWidget {
   const EventsSection({super.key});
@@ -32,7 +33,7 @@ class _EventsSectionState extends State<EventsSection> {
       try {
         final res = await http.get(Uri.parse('${auth.baseUrl}/check-event-booking?userId=${auth.user!.id}&eventTitle=${ev['title']}'));
         final data = jsonDecode(res.body);
-        setState(() => _bookingStatus[ev['title'].toString()] = data['isBooked'] ?? false);
+        if (mounted) setState(() => _bookingStatus[ev['title'].toString()] = data['isBooked'] ?? false);
       } catch (e) {
         debugPrint('Error checking booking for ${ev['title']}');
       }
@@ -64,6 +65,14 @@ class _EventsSectionState extends State<EventsSection> {
     if (success == true) {
       setState(() => _bookingStatus[event['title'].toString()] = true);
     }
+  }
+
+  void _showFullCalendar() {
+    debugPrint('Opening Full Calendar...');
+    showDialog(
+      context: context,
+      builder: (context) => const CalendarModal(),
+    );
   }
 
   final events = [
@@ -116,7 +125,7 @@ class _EventsSectionState extends State<EventsSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: const Color(0xFF0D0D2B), // Changed to DARK THEME to match your project
       padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 24),
       child: Center(
         child: ConstrainedBox(
@@ -145,7 +154,7 @@ class _EventsSectionState extends State<EventsSection> {
                         Text(
                           'Events in Cambodia',
                           style: GoogleFonts.plusJakartaSans(
-                            color: const Color(0xFF0D0D2B),
+                            color: Colors.white,
                             fontSize: 40,
                             fontWeight: FontWeight.w800,
                             height: 1.1,
@@ -155,24 +164,21 @@ class _EventsSectionState extends State<EventsSection> {
                     ),
                   ),
                   OutlinedButton.icon(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const CalendarModal(),
-                      );
-                    },
-                    icon: const Icon(LucideIcons.calendar, size: 16),
+                    onPressed: _showFullCalendar,
+                    icon: const Icon(LucideIcons.calendar, size: 18),
                     label: const Text('View Full Calendar'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF0D0D2B),
-                      side: const BorderSide(color: Color(0xFF0D0D2B), width: 2),
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white24, width: 2),
                       padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width > 600 ? 24 : 16, 
-                        vertical: MediaQuery.of(context).size.width > 600 ? 20 : 12
+                        horizontal: MediaQuery.of(context).size.width > 600 ? 32 : 16, 
+                        vertical: MediaQuery.of(context).size.width > 600 ? 22 : 14
                       ),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                      textStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold),
                     ),
-                  ),
+                  ).animate(onPlay: (c) => c.repeat(reverse: true))
+                   .shimmer(duration: 3.seconds, color: Colors.white10),
                 ],
               ),
               const SizedBox(height: 48),
@@ -213,18 +219,18 @@ class _EventCardState extends State<_EventCard> {
         duration: const Duration(milliseconds: 300),
         margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
-          color: _isHovered ? const Color(0xFFF8F7F4) : Colors.white,
+          color: _isHovered ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.02),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: widget.isBooked 
                 ? Colors.green.withOpacity(0.3) 
-                : (_isHovered ? color.withOpacity(0.3) : const Color(0xFF0D0D2B).withOpacity(0.06)),
+                : (_isHovered ? color.withOpacity(0.5) : Colors.white.withOpacity(0.05)),
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: _isHovered
               ? [
                   BoxShadow(
-                    color: widget.isBooked ? Colors.green.withOpacity(0.1) : color.withOpacity(0.1),
+                    color: widget.isBooked ? Colors.green.withOpacity(0.05) : color.withOpacity(0.05),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   )
@@ -240,7 +246,6 @@ class _EventCardState extends State<_EventCard> {
               padding: const EdgeInsets.all(24),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Determine if we should use a Column (mobile) or Row (desktop)
                   bool isMobile = constraints.maxWidth < 800;
                   
                   if (isMobile) {
@@ -280,7 +285,7 @@ class _EventCardState extends State<_EventCard> {
           ),
         ),
       ),
-    );
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1);
   }
 
   Widget _dateCircle(Color color) {
@@ -348,10 +353,10 @@ class _EventCardState extends State<_EventCard> {
               Expanded(
                 child: Text(
                   widget.event['title'] as String,
-                  style: GoogleFonts.plusJakartaSans(color: const Color(0xFF0D0D2B), fontWeight: FontWeight.bold, fontSize: 20),
+                  style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
-              if (width == null) ...[ // Desktop only badge here
+              if (width == null) ...[ 
                 const SizedBox(width: 8),
                 _eventBadge(color),
               ]
@@ -369,7 +374,7 @@ class _EventCardState extends State<_EventCard> {
           const SizedBox(height: 16),
           Text(
             widget.event['desc'] as String,
-            style: GoogleFonts.outfit(color: const Color(0xFF4A4A6A), fontSize: 15, height: 1.5),
+            style: GoogleFonts.outfit(color: Colors.white54, fontSize: 15, height: 1.5),
           ),
         ],
       ),
@@ -393,8 +398,9 @@ class _EventCardState extends State<_EventCard> {
           decoration: BoxDecoration(
             color: widget.isBooked 
                 ? Colors.green 
-                : (_isHovered ? color : const Color(0xFF0D0D2B)),
+                : (_isHovered ? color : Colors.white.withOpacity(0.05)),
             borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: Colors.white10),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -420,12 +426,12 @@ class _EventCardState extends State<_EventCard> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: (widget.isBooked ? Colors.green : color).withOpacity(0.7)),
+        Icon(icon, size: 16, color: (widget.isBooked ? Colors.green : color).withOpacity(0.5)),
         const SizedBox(width: 8),
         Flexible(
           child: Text(
             text, 
-            style: GoogleFonts.outfit(color: const Color(0xFF6B6B80), fontSize: 14),
+            style: GoogleFonts.outfit(color: Colors.white38, fontSize: 14),
             overflow: TextOverflow.ellipsis,
           ),
         ),
