@@ -33,6 +33,7 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
     setState(() => _isLoading = true);
 
     try {
+      debugPrint('Sending enrollment data for ${widget.className}...');
       final response = await http.post(
         Uri.parse('${auth.baseUrl}/enroll'),
         headers: {'Content-Type': 'application/json'},
@@ -40,15 +41,18 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
           'userId': auth.user!.id,
           'className': widget.className,
           'phone': _phoneController.text,
-          'age': int.parse(_ageController.text),
+          'age': int.tryParse(_ageController.text) ?? 0,
           'experience': _experience,
           'amount': widget.price,
           'paymentMethod': _paymentMethod,
         }),
-      ).timeout(const Duration(seconds: 60)); // Added timeout
+      ).timeout(const Duration(seconds: 90)); // Increased to 90 seconds
 
+      debugPrint('Enrollment Response Status: ${response.statusCode}');
+      
       if (response.statusCode == 201) {
         if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enrollment Successful!')));
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => ClassViewScreen(className: widget.className)),
@@ -58,14 +62,15 @@ class _EnrollmentFormScreenState extends State<EnrollmentFormScreen> {
         final data = jsonDecode(response.body);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${data['message'] ?? 'Enrollment failed'}'))
+            SnackBar(content: Text('Server Error: ${data['message'] ?? 'Enrollment failed'}'), backgroundColor: Colors.redAccent)
           );
         }
       }
     } catch (e) {
+      debugPrint('Enrollment Exception: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Connection timeout or error. The cloud server might be busy.'))
+          SnackBar(content: Text('Connection failed: $e'), backgroundColor: Colors.redAccent)
         );
       }
     } finally {
