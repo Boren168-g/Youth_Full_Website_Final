@@ -34,9 +34,9 @@ class CalendarModal extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF0D0D2B),
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withAlpha(25)),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 40, offset: const Offset(0, 20))
+              BoxShadow(color: Colors.black.withAlpha(128), blurRadius: 40, offset: const Offset(0, 20))
             ],
           ),
           child: Column(
@@ -45,7 +45,7 @@ class CalendarModal extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.fromLTRB(32, 32, 24, 24),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.02),
+                  color: Colors.white.withAlpha(5),
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
                 ),
                 child: Row(
@@ -59,7 +59,7 @@ class CalendarModal extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                  color: const Color(0xFFFF6B35).withAlpha(25),
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                                 child: Text(
@@ -86,7 +86,7 @@ class CalendarModal extends StatelessWidget {
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(LucideIcons.x, color: Colors.white38, size: 20),
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.05),
+                        backgroundColor: Colors.white.withAlpha(13),
                         padding: const EdgeInsets.all(12),
                       ),
                     ),
@@ -102,6 +102,7 @@ class CalendarModal extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final ev = events[index];
                     final color = ev['color'] as Color;
+                    final dateStr = ev['date'] as String;
                     
                     return MouseRegion(
                       cursor: SystemMouseCursors.click,
@@ -109,9 +110,9 @@ class CalendarModal extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.03),
+                          color: Colors.white.withAlpha(8),
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                          border: Border.all(color: Colors.white.withAlpha(13)),
                         ),
                         child: Row(
                           children: [
@@ -123,18 +124,18 @@ class CalendarModal extends StatelessWidget {
                                 color: color,
                                 borderRadius: BorderRadius.circular(18),
                                 boxShadow: [
-                                  BoxShadow(color: color.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))
+                                  BoxShadow(color: color.withAlpha(77), blurRadius: 10, offset: const Offset(0, 4))
                                 ],
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    ev['date']!.split(' ')[1],
-                                    style: GoogleFonts.outfit(color: Colors.white.withOpacity(0.7), fontSize: 11, fontWeight: FontWeight.bold),
+                                    dateStr.split(' ')[1],
+                                    style: GoogleFonts.outfit(color: Colors.white.withAlpha(179), fontSize: 11, fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    ev['date']!.split(' ')[0],
+                                    dateStr.split(' ')[0],
                                     style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900, height: 1),
                                   ),
                                 ],
@@ -147,26 +148,26 @@ class CalendarModal extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    ev['title']!,
+                                    ev['title'] as String,
                                     style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
                                   ),
                                   const SizedBox(height: 6),
                                   Row(
                                     children: [
-                                      Icon(LucideIcons.mapPin, size: 12, color: color.withOpacity(0.7)),
+                                      Icon(LucideIcons.mapPin, size: 12, color: color.withAlpha(179)),
                                       const SizedBox(width: 6),
                                       Text(
-                                        ev['location']!,
+                                        ev['location'] as String,
                                         style: GoogleFonts.outfit(color: Colors.white38, fontSize: 13),
                                       ),
                                       const SizedBox(width: 16),
                                       Container(
                                         width: 4, height: 4,
-                                        decoration: BoxDecoration(color: Colors.white10, shape: BoxShape.circle),
+                                        decoration: const BoxDecoration(color: Colors.white10, shape: BoxShape.circle),
                                       ),
                                       const SizedBox(width: 16),
                                       Text(
-                                        ev['type']!,
+                                        ev['type'] as String,
                                         style: GoogleFonts.outfit(color: color, fontSize: 12, fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -189,7 +190,7 @@ class CalendarModal extends StatelessWidget {
                 padding: const EdgeInsets.all(24),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.01),
+                  color: Colors.white.withAlpha(3),
                   borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
                 ),
                 child: Center(
