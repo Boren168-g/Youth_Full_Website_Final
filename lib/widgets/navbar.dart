@@ -55,127 +55,102 @@ class Navbar extends StatelessWidget {
         ),
         ClipRRect(
           child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: isScrolled ? 10 : 0, sigmaY: isScrolled ? 10 : 0),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          color: isScrolled ? const Color(0xFF0D0D2B).withOpacity(0.8) : Colors.transparent,
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width > 600 ? 24 : 12, 
-            vertical: 10
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Row(
-              children: [
-                // Logo
-                InkWell(
-                  onTap: () => onLinkTap('Home'),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        LucideIcons.landmark, 
-                        size: 24, 
-                        color: Color(0xFF90CAF9) // Light blue matching the screenshot
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Code4Youth',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: const Color(0xFFFFF59D), // Yellowish matching the screenshot
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                      Text(
-                        'Code',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        '4',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: const Color(0xFFFF6B35),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        'Youth',
-                        style: GoogleFonts.plusJakartaSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                // Desktop Links
-                if (MediaQuery.of(context).size.width > 900)
-                  Row(
-                    children: [
-                      _navLink('About'),
-                      _navLink('Programs'),
-                      _navLink('Impact'),
-                      _navLink('Team'),
-                      _navLink('Events'),
-                      _navLink('Contact'),
-                    ].animate(interval: 50.ms).fadeIn(duration: 400.ms).slideX(begin: 0.1),
-                  ),
-                if (MediaQuery.of(context).size.width > 900) const Spacer(),
-                // Auth Buttons
-                if (user == null) ...[
-                  if (MediaQuery.of(context).size.width > 450)
-                    TextButton(
-                      onPressed: () => _openAuth(context, 'signin'),
-                      child: Text(
-                        'Sign In',
-                        style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+            filter: ImageFilter.blur(sigmaX: isScrolled ? 10 : 0, sigmaY: isScrolled ? 10 : 0),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              color: isScrolled ? const Color(0xFF0D0D2B).withOpacity(0.8) : Colors.transparent,
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width > 600 ? 24 : 12, 
+                vertical: 10
+              ),
+              child: SafeArea(
+                bottom: false,
+                child: Row(
+                  children: [
+                    // Logo section matching the screenshot
+                    InkWell(
+                      onTap: () => onLinkTap('Home'),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            LucideIcons.landmark, 
+                            size: 24, 
+                            color: Color(0xFF90CAF9) // Light blue matching screenshot
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Code4Youth',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: const Color(0xFFFFF59D), // Yellowish matching screenshot
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  const SizedBox(width: 4),
-                  ElevatedButton(
-                    onPressed: () => _openAuth(context, 'signup'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B35),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: const StadiumBorder(),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width > 600 ? 24 : 12,
-                        vertical: 12
+                    const Spacer(),
+                    // Desktop Links
+                    if (MediaQuery.of(context).size.width > 900)
+                      Row(
+                        children: [
+                          _navLink('About'),
+                          _navLink('Programs'),
+                          _navLink('Impact'),
+                          _navLink('Team'),
+                          _navLink('Events'),
+                          _navLink('Contact'),
+                        ].animate(interval: 50.ms).fadeIn(duration: 400.ms).slideX(begin: 0.1),
                       ),
-                    ),
-                    child: Text(
-                      MediaQuery.of(context).size.width > 600 ? 'Sign Up Free' : 'Sign Up',
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                  ).animate().shimmer(delay: 2.seconds, duration: 1500.ms),
-                ] else
-                  _userDropdown(user, authProvider, context),
+                    if (MediaQuery.of(context).size.width > 900) const Spacer(),
+                    // Auth Buttons
+                    if (user == null) ...[
+                      if (MediaQuery.of(context).size.width > 450)
+                        TextButton(
+                          onPressed: () => _openAuth(context, 'signin'),
+                          child: Text(
+                            'Sign In',
+                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                          ),
+                        ),
+                      const SizedBox(width: 4),
+                      ElevatedButton(
+                        onPressed: () => _openAuth(context, 'signup'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF6B35),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: const StadiumBorder(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width > 600 ? 24 : 12,
+                            vertical: 12
+                          ),
+                        ),
+                        child: Text(
+                          MediaQuery.of(context).size.width > 600 ? 'Sign Up Free' : 'Sign Up',
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                      ).animate().shimmer(delay: 2.seconds, duration: 1500.ms),
+                    ] else
+                      _userDropdown(user, authProvider, context),
 
-                // Hamburger Menu for Mobile
-                if (MediaQuery.of(context).size.width <= 900) ...[
-                  const SizedBox(width: 8),
-                  Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(LucideIcons.menu, color: Colors.white),
-                      onPressed: () => Scaffold.of(context).openEndDrawer(),
-                    ),
-                  ),
-                ],
-              ],
+                    // Hamburger Menu for Mobile
+                    if (MediaQuery.of(context).size.width <= 900) ...[
+                      const SizedBox(width: 8),
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: const Icon(LucideIcons.menu, color: Colors.white),
+                          onPressed: () => Scaffold.of(context).openEndDrawer(),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 
