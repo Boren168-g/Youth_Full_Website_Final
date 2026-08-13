@@ -81,8 +81,8 @@ class GetInvolvedSection extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    maxWidth: 600,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
                     child: Text(
                       'Impact the next generation of Cambodian developers. Choose the path that matches your passion.',
                       style: GoogleFonts.outfit(color: Colors.white.withAlpha(120), fontSize: 18, height: 1.6),

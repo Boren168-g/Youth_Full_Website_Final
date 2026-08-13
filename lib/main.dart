@@ -231,9 +231,7 @@ class _HomePageState extends State<HomePage> {
             const TestimonialsSection(),
             TeamSection(key: _teamKey),
             EventsSection(key: _eventsKey),
-            GetInvolvedSection(
-              onApplyTap: () => _handleApply('General Interest'),
-            ),
+            const GetInvolvedSection(),
             ContactSection(key: _contactKey),
             const FooterSection(),
           ],
