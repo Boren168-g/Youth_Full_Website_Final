@@ -67,28 +67,44 @@ class Navbar extends StatelessWidget {
                 bottom: false,
                 child: Row(
                   children: [
-                    // Orange Rounded Square Logo with </> (matching your original design)
+                    // New Icon matching your screenshot (Grey Browser Tab with </>)
                     InkWell(
                       onTap: () => onLinkTap('Home'),
                       child: Row(
                         children: [
                           Container(
-                            width: 32,
-                            height: 32,
+                            width: 28,
+                            height: 24,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF6B35), // Original Orange
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(color: const Color(0xFFFF6B35).withAlpha(80), blurRadius: 10, offset: const Offset(0, 4))
+                              color: const Color(0xFF333333), // Dark grey window
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            ),
+                            child: Column(
+                              children: [
+                                // Top bar of the mini window
+                                Container(
+                                  height: 6,
+                                  width: double.infinity,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF555555), // Lighter grey header
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
+                                  ),
+                                ),
+                                // Code icon inside
+                                const Expanded(
+                                  child: Center(
+                                    child: Icon(LucideIcons.code, size: 12, color: Colors.white70),
+                                  ),
+                                ),
                               ],
                             ),
-                            child: const Icon(LucideIcons.code, size: 18, color: Colors.white),
                           ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                           const SizedBox(width: 12),
                           Text(
                             'Code4Youth',
                             style: GoogleFonts.plusJakartaSans(
-                              color: Colors.white,
+                              color: const Color(0xFFE6E696), // Yellow matching your screenshot
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
