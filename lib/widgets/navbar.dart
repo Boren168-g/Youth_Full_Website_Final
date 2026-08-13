@@ -67,25 +67,28 @@ class Navbar extends StatelessWidget {
                 bottom: false,
                 child: Row(
                   children: [
-                    // Orange Logo from your image
+                    // Orange Rounded Square Logo with </> symbol from your image
                     InkWell(
                       onTap: () => onLinkTap('Home'),
                       child: Row(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              'https://cdn-icons-png.flaticon.com/512/2621/2621037.png',
-                              width: 32,
-                              height: 32,
-                              fit: BoxFit.cover,
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6B35), // The exact orange from your image
+                              borderRadius: BorderRadius.circular(8), // Rounded corners
+                              boxShadow: [
+                                BoxShadow(color: const Color(0xFFFF6B35).withAlpha(80), blurRadius: 10, offset: const Offset(0, 4))
+                              ],
                             ),
+                            child: const Icon(LucideIcons.code, size: 18, color: Colors.white), // The </> symbol
                           ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                           const SizedBox(width: 12),
                           Text(
                             'Code4Youth',
                             style: GoogleFonts.plusJakartaSans(
-                              color: Colors.white,
+                              color: Colors.white, // Changed back to white for professional look
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
