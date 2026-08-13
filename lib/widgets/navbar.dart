@@ -33,7 +33,7 @@ class Navbar extends StatelessWidget {
 
     return Stack(
       children: [
-        // Rainbow Gradient Line at the very top
+        // Rainbow Gradient Line at the very top (matching your screenshot)
         Positioned(
           top: 0, left: 0, right: 0,
           child: Container(
@@ -67,21 +67,28 @@ class Navbar extends StatelessWidget {
                 bottom: false,
                 child: Row(
                   children: [
-                    // Logo section matching the screenshot
+                    // Orange Rounded Square Logo with </> (matching your original design)
                     InkWell(
                       onTap: () => onLinkTap('Home'),
                       child: Row(
                         children: [
-                          const Icon(
-                            LucideIcons.landmark, 
-                            size: 24, 
-                            color: Color(0xFF90CAF9) // Light blue matching screenshot
-                          ),
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6B35), // Original Orange
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(color: const Color(0xFFFF6B35).withAlpha(80), blurRadius: 10, offset: const Offset(0, 4))
+                              ],
+                            ),
+                            child: const Icon(LucideIcons.code, size: 18, color: Colors.white),
+                          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                           const SizedBox(width: 12),
                           Text(
                             'Code4Youth',
                             style: GoogleFonts.plusJakartaSans(
-                              color: const Color(0xFFFFF59D), // Yellowish matching screenshot
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
