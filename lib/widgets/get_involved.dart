@@ -50,7 +50,11 @@ class GetInvolvedSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Color(0xFF0D0D2B),
+        gradient: LinearGradient(
+          colors: [Color(0xFF0D0D2B), Color(0xFF161642)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 24),
       child: Center(
