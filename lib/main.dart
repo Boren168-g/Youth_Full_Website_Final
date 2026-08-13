@@ -18,6 +18,8 @@ import 'widgets/footer.dart';
 import 'widgets/auth_modal.dart';
 import 'screens/learning/class_view.dart';
 import 'screens/learning/enrollment_form.dart';
+import 'widgets/code_playground_modal.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 void main() {
   runApp(
@@ -86,6 +88,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _openCodePlayground() {
+    showDialog(
+      context: context,
+      builder: (context) => const CodePlaygroundModal(),
+    );
+  }
+
   Future<void> _handleApply(String programName) async {
     final auth = context.read<AuthProvider>();
     if (auth.user == null) {
@@ -93,7 +102,6 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    // Check if user is already registered for this class
     try {
       final response = await http.get(
         Uri.parse('${auth.baseUrl}/check-registration?userId=${auth.user!.id}&className=$programName'),
@@ -105,14 +113,13 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => ClassViewScreen(className: programName)));
         }
       } else {
-        // Not registered, show the detailed Enrollment Form with Payment
         if (mounted) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => EnrollmentFormScreen(
                 className: programName,
-                price: programName == 'AI Lab' ? 99.00 : 49.00, // Example pricing
+                price: programName == 'AI Lab' ? 99.00 : 49.00,
               ),
             ),
           );
@@ -201,6 +208,14 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openCodePlayground,
+        backgroundColor: const Color(0xFFFF6B35),
+        hoverColor: const Color(0xFFE65A2B),
+        icon: const Icon(LucideIcons.code2, color: Colors.white),
+        label: const Text('Practice Coding', style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 10,
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
