@@ -54,13 +54,13 @@ class Navbar extends StatelessWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF6B35),
-                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xFFFF6B35), // The orange from your image
+                          borderRadius: BorderRadius.circular(8), // Rounded square
                           boxShadow: [
-                            BoxShadow(color: const Color(0xFFFF6B35).withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))
+                            BoxShadow(color: const Color(0xFFFF6B35).withAlpha(80), blurRadius: 10, offset: const Offset(0, 4))
                           ],
                         ),
-                        child: const Icon(LucideIcons.code2, size: 16, color: Colors.white),
+                        child: const Icon(LucideIcons.code, size: 18, color: Colors.white), // The </> icon from your image
                       ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                       const SizedBox(width: 8),
                       Text(

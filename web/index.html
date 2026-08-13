@@ -11,32 +11,31 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Code4Youth">
-  <link rel="apple-touch-icon" href="https://img.icons8.com/color/512/code.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/code.png"/>
+  <!-- Matching your orange code icon -->
+  <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/512/code.png">
+
+  <!-- Favicon for browser tab -->
+  <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/code.png"/>
 
   <title>Code4Youth</title>
   <link rel="manifest" href="manifest.json">
 
   <script>
-    // The value below is injected by flutter build post-process.
     var serviceWorkerVersion = null;
   </script>
-  <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
 <body>
   <script>
     window.addEventListener('load', function(ev) {
-      // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
         onEntrypointLoaded: function(engineInitializer) {
           engineInitializer.initializeEngine({
-            renderer: "html" // Forces HTML renderer to show images correctly on Web
+            renderer: "html"
           }).then(function(appRunner) {
             appRunner.runApp();
           });
