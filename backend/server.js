@@ -128,4 +128,15 @@ app.listen(PORT, '0.0.0.0', () => {
     pool.query(`CREATE TABLE IF NOT EXISTS registrations (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, class_name VARCHAR(255), phone VARCHAR(20), age INT, experience_level VARCHAR(50), amount DECIMAL(10,2), payment_method VARCHAR(50), payment_status ENUM('unpaid', 'paid') DEFAULT 'paid', registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
     pool.query(`CREATE TABLE IF NOT EXISTS event_bookings (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, event_title VARCHAR(255), payment_status VARCHAR(50), booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
     pool.query(`CREATE TABLE IF NOT EXISTS contacts (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), message TEXT, createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`).catch(e => console.error(e));
+    pool.query(`CREATE TABLE IF NOT EXISTS get_involved_submissions (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, type VARCHAR(50), note TEXT, createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)`).catch(e => console.error(e));
+});
+
+app.post('/api/get-involved-submit', async (req, res) => {
+    const { userId, type, note } = req.body;
+    try {
+        await pool.query('INSERT INTO get_involved_submissions (user_id, type, note) VALUES (?, ?, ?)', [userId, type, note]);
+        res.status(201).json({ message: 'Submission successful' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error saving submission' });
+    }
 });
