@@ -33,7 +33,7 @@ class Navbar extends StatelessWidget {
 
     return Stack(
       children: [
-        // Rainbow Gradient Line at the very top (matching your screenshot)
+        // Rainbow Gradient Line at the very top
         Positioned(
           top: 0, left: 0, right: 0,
           child: Container(
@@ -67,44 +67,25 @@ class Navbar extends StatelessWidget {
                 bottom: false,
                 child: Row(
                   children: [
-                    // New Icon matching your screenshot (Grey Browser Tab with </>)
+                    // Orange Logo from your image
                     InkWell(
                       onTap: () => onLinkTap('Home'),
                       child: Row(
                         children: [
-                          Container(
-                            width: 28,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF333333), // Dark grey window
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: Colors.white.withOpacity(0.1)),
-                            ),
-                            child: Column(
-                              children: [
-                                // Top bar of the mini window
-                                Container(
-                                  height: 6,
-                                  width: double.infinity,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF555555), // Lighter grey header
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(3)),
-                                  ),
-                                ),
-                                // Code icon inside
-                                const Expanded(
-                                  child: Center(
-                                    child: Icon(LucideIcons.code, size: 12, color: Colors.white70),
-                                  ),
-                                ),
-                              ],
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              'https://cdn-icons-png.flaticon.com/512/2621/2621037.png',
+                              width: 32,
+                              height: 32,
+                              fit: BoxFit.cover,
                             ),
                           ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                           const SizedBox(width: 12),
                           Text(
                             'Code4Youth',
                             style: GoogleFonts.plusJakartaSans(
-                              color: const Color(0xFFE6E696), // Yellow matching your screenshot
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
