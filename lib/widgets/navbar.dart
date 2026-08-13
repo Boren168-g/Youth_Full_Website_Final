@@ -31,8 +31,30 @@ class Navbar extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
     final user = authProvider.user;
 
-    return ClipRRect(
-      child: BackdropFilter(
+    return Stack(
+      children: [
+        // Rainbow Gradient Line at the very top
+        Positioned(
+          top: 0, left: 0, right: 0,
+          child: Container(
+            height: 3,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.orange,
+                  Colors.yellow,
+                  Colors.green,
+                  Colors.cyan,
+                  Colors.blue,
+                  Colors.purple,
+                  Colors.pink,
+                ],
+              ),
+            ),
+          ),
+        ),
+        ClipRRect(
+          child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: isScrolled ? 10 : 0, sigmaY: isScrolled ? 10 : 0),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 400),
@@ -50,16 +72,23 @@ class Navbar extends StatelessWidget {
                   onTap: () => onLinkTap('Home'),
                   child: Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          'https://cdn-icons-png.flaticon.com/512/2621/2621037.png',
-                          width: 32,
-                          height: 32,
-                          fit: BoxFit.cover,
+                      const Icon(
+                        LucideIcons.landmark, 
+                        size: 24, 
+                        color: Color(0xFF90CAF9) // Light blue matching the screenshot
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Code4Youth',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: const Color(0xFFFFF59D), // Yellowish matching the screenshot
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                      ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
-                      const SizedBox(width: 10),
+                      ),
+                    ],
+                  ),
+                ),
                       Text(
                         'Code',
                         style: GoogleFonts.plusJakartaSans(
